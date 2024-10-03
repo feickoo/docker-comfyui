@@ -2,7 +2,6 @@
 
 # Define the directory for temporary cloning
 TEMP_DIR="/gitclone"
-ROOT="/comfyui"
 
 # Mark directories as safe for Git
 git config --global --add safe.directory /comfyui
@@ -43,7 +42,8 @@ else
   echo "Installing ComfyUI, cloning..."
   
   # Clone the repository into /comfyui and include the .git directory
-  git clone ${COMFY_GIT} ${TEMP_DIR} --depth 1 -q
+  git clone ${COMFY_GIT} ${TEMP_DIR} --depth 1 --tags -q
+  cd ${ROOT}
   
   # Move the files from the temporary directory to /comfyui
   cp -rf ${TEMP_DIR}/* ${ROOT}/
@@ -83,5 +83,4 @@ else
    echo "ComfyUI-Manager installed successfully."
 fi
 
-# Execute any passed command (like starting main.py)
 exec "$@"
