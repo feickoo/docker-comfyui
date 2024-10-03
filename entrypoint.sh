@@ -1,34 +1,45 @@
 #!/bin/bash
 
-# Temporary directory for cloning
+# Define the directory for temporary cloning
 TEMP_DIR="/gitclone"
 
-# Clone the repository if main.py is not found in the current directory
-if [ ! -f "main.py" ]; then 
-  echo "main.py not found, cloning into ${TEMP_DIR}..."
+# Check if /comfyui is a git repository
+if [ -d "${ROOT}/.git" ]; then
+  echo "checking updates for ComfyUI..."
   
-  # Remove the temporary directory if it exists
-  rm -rf ${TEMP_DIR}
+  # Move into the /comfyui directory
+  cd ${ROOT}
   
-  # Clone the repository into the temporary directory
-  git clone https://github.com/comfyanonymous/ComfyUI.git ${TEMP_DIR} --depth 1
+  # Fetch the latest changes from the remote repository
+  git fetch --tags
   
-  # Get the latest version or commit hash (you can modify this if needed)
-  cd ${TEMP_DIR}
-  LATEST_COMMIT=$(git rev-parse HEAD)
-  echo "Cloned latest version with commit hash: ${LATEST_COMMIT}"
-  
-  # Move back to the root
-  cd -
+  # Get the latest local and remote tags
+  LOCAL_TAG=$(git describe --tags $(git rev-list --tags --max-count=1))
+  REMOTE_TAG=$(git describe --tags $(git ls-remote --tags origin | cut -d/ -f3 | tail -n1))
 
-  # Copy the contents of the cloned directory to the /comfyui directory, overwriting if necessary
-  echo "Copying ${TEMP_DIR} to /comfyui..."
-  cp -rf ${TEMP_DIR}/* /comfyui/
-  cp -rf ${TEMP_DIR}/.[^.]* /comfyui/ # Also copy hidden files and directories (like .git)
-
-  echo "Files copied to /comfyui successfully."
+  echo "Current version (local): ${LOCAL_TAG}"
+  echo "Latest version (remote): ${REMOTE_TAG}"
+  
+  # If the versions don't match, pull the latest changes
+  if [ "${LOCAL_TAG}" != "${REMOTE_TAG}" ]; then
+    echo "New version available, pulling the latest changes..."
+    git reset --hard origin/master
+    git pull --rebase
+    echo "Updated to version ${REMOTE_TAG}"
+  else
+    echo "Already up-to-date with the latest version."
+  fi
 else
-  echo "main.py found, no need to clone."
+  echo "Installing ComfyUI, cloning..."
+  
+  # Clone the repository into /comfyui and include the .git directory
+  git clone https://github.com/comfyanonymous/ComfyUI.git ${TEMP_DIR} --depth 1 --tags
+  cd ${ROOT}
+  
+  # Move the files from the temporary directory to /comfyui
+  cp -rf ${TEMP_DIR}/* ${ROOT}/
+  cp -rf ${TEMP_DIR}/.[^.]* ${ROOT}/ # Also copy hidden files
+  echo "Cloned and moved files to /comfyui successfully."
 fi
 
 # Execute any passed command (like starting main.py)
