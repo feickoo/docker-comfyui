@@ -3,9 +3,13 @@
 # Define the directory for temporary cloning
 TEMP_DIR="/gitclone"
 
-# Mark /comfyui and /comfyui/custom_nodes/ComfyUI-Manager as safe directories for Git
+# Mark directories as safe for Git
 git config --global --add safe.directory /comfyui
 git config --global --add safe.directory /comfyui/custom_nodes/ComfyUI-Manager
+
+# Repository URL for ComfyUI
+COMFY_GIT="https://github.com/comfyanonymous/ComfyUI.git"
+C_M_GIT="https://github.com/ltdrdata/ComfyUI-Manager.git"
 
 # Check if /comfyui is a git repository
 if [ -d "${ROOT}/.git" ]; then
@@ -14,30 +18,31 @@ if [ -d "${ROOT}/.git" ]; then
   # Move into the /comfyui directory
   cd ${ROOT}
   
-  # Fetch the latest changes from the remote repository
-  git fetch --tags
+  # Fetch the latest changes from the remote repository quietly
+  git fetch --tags -q
   
-  # Get the latest local and remote tags
-  LOCAL_TAG=$(git describe --tags "$LOCAL_COMMIT" 2>/dev/null)
-  REMOTE_TAG=$(git describe --tags "$REMOTE_COMMIT" 2>/dev/null)
+  # Get the latest local tag
+  LOCAL_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || git rev-parse --short HEAD)
+  # Get the latest remote tag directly from the repository URL
+  REMOTE_TAG=$(git ls-remote --tags ${COMFY_GIT} | grep -o 'refs/tags/[vV]*[0-9.]*' | sort -V | tail -n1 | sed 's/refs\/tags\///')
 
   echo "Current version (local): ${LOCAL_TAG}"
   echo "Latest version (remote): ${REMOTE_TAG}"
   
-  # If the versions don't match, pull the latest changes
+  # If the local and remote versions don't match, pull the latest changes
   if [ "${LOCAL_TAG}" != "${REMOTE_TAG}" ]; then
     echo "New version available, pulling the latest changes..."
     git reset --hard origin/master
     git pull --rebase
     echo "Updated to version ${REMOTE_TAG}"
   else
-    echo "ComfyUI is up-to-date."
+    echo "Already up-to-date with the latest version."
   fi
 else
   echo "Installing ComfyUI, cloning..."
   
   # Clone the repository into /comfyui and include the .git directory
-  git clone https://github.com/comfyanonymous/ComfyUI.git ${TEMP_DIR} --depth 1 --tags -q
+  git clone ${COMFY_GIT} ${TEMP_DIR} --depth 1 --tags -q
   cd ${ROOT}
   
   # Move the files from the temporary directory to /comfyui
@@ -49,13 +54,19 @@ fi
 # Check if ComfyUI-Manager exists and update or clone it
 if [ -d "${ROOT}/custom_nodes/ComfyUI-Manager/.git" ]; then
    echo "Checking updates for ComfyUI-Manager..."
-
+   
+   # Move into the ComfyUI-Manager directory
    cd ${ROOT}/custom_nodes/ComfyUI-Manager
-   git fetch --tags
-   LOCAL_TAG=$(git describe --tags "$LOCAL_COMMIT" 2>/dev/null)
-   REMOTE_TAG=$(git describe --tags "$REMOTE_COMMIT" 2>/dev/null)
+   
+   # Fetch the latest changes from the remote repository quietly
+   git fetch --tags -q
+   
+   # Get the latest local and remote tags
+   LOCAL_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || git rev-parse --short HEAD)
+   REMOTE_TAG=$(git ls-remote --tags ${C_M_GIT} | grep -o 'refs/tags/[vV]*[0-9.]*' | sort -V | tail -n1 | sed 's/refs\/tags\///')
+   
    echo "Current ComfyUI-Manager version (local): ${LOCAL_TAG}"
-   echo "Latest ComfyUI-Manager version (remote): ${REMOTE_TAG}"   
+   echo "Latest ComfyUI-Manager version (remote): ${REMOTE_TAG}"
    
    # If the versions don't match, pull the latest changes
    if [ "${LOCAL_TAG}" != "${REMOTE_TAG}" ]; then
@@ -64,12 +75,12 @@ if [ -d "${ROOT}/custom_nodes/ComfyUI-Manager/.git" ]; then
      git pull --rebase
      echo "Updated ComfyUI-Manager to version ${REMOTE_TAG}"
    else
-     echo "ComfyUI-Manager is up-to-date."
+     echo "ComfyUI-Manager is already up-to-date."
    fi
 else
-   echo "ComfyUI-Manager not found, installing..."
-   git clone https://github.com/ltdrdata/ComfyUI-Manager.git ${ROOT}/custom_nodes/ComfyUI-Manager --depth 1
-   echo "ComfyUI-Manager installed successfully."
+   echo "ComfyUI-Manager not found, cloning..."
+   git clone ${C_M_GIT} ${ROOT}/custom_nodes/ComfyUI-Manager --depth 1 -q
+   echo "ComfyUI-Manager cloned successfully."
 fi
 
 # Execute any passed command (like starting main.py)
