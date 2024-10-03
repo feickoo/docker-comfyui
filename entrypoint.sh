@@ -3,15 +3,15 @@
 set -Eeuo pipefail
 
 # Check if main.py exists
-if [ ! -f "main.py" ]; then
+if [ ! -f "./ComfyUI/main.py" ]; then
   echo "main.py not found, cloning..."
-  git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT} --depth 1 
+  git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT}
 else
   echo "main.py found." 
 fi
 
 # Check if ComfyUI-Manager exists
-if [ ! -d /custom_nodes/ComfyUI-Manager ]; then
+if [ ! -d ${ROOT}/custom_nodes/ComfyUI-Manager ]; then
   echo "ComfyUI-Manager not found, cloning..."
   git clone https://github.com/ltdrdata/ComfyUI-Manager.git ${ROOT}/custom_nodes/ComfyUI-Manager --depth 1
 else
