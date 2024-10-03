@@ -5,7 +5,7 @@ set -Eeuo pipefail
 # Check if main.py exists
 if [ ! -f "./ComfyUI/main.py" ]; then
   echo "main.py not found, cloning..."
-  git clone https://github.com/comfyanonymous/ComfyUI.git ${ROOT}
+  git clone https://github.com/comfyanonymous/ComfyUI.git
 else
   echo "main.py found." 
 fi
