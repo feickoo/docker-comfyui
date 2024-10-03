@@ -1,19 +1,19 @@
-# Use the official PyTorch image as the base
 FROM pytorch/pytorch:2.4.1-cuda12.4-cudnn9-runtime
 
-# Install Git and any necessary system dependencies
-RUN apt-get update && apt-get install -y git
+RUN apt-get update && apt-get install -y git wget unzip
 
-# Set the working directory to /comfy
-WORKDIR /comfy
+ENV ROOT=/comfyui
 
-# Clone the ComfyUI repository into /comfy
-RUN git clone https://github.com/comfyanonymous/ComfyUI.git . && \
-    git checkout master && \
-    pip install -r requirements.txt
+WORKDIR /workspace
+RUN --mount=type=cache,target=/root/.cache/pip \
+  wget https://raw.githubusercontent.com/comfyanonymous/ComfyUI/master/requirements.txt && \
+  pip install -r requirements.txt
+ 
+RUN wget https://raw.githubusercontent.com/feickoo/docker-comfyui/refs/heads/master/entrypoint.sh \
+    && chmod u+x entrypoint.sh
 
-# Expose port 8188 to make the UI accessible
-EXPOSE 8188
+WORKDIR ${ROOT}
 
-# Command to run the application and listen on all interfaces (0.0.0.0)
-CMD ["python", "main.py", "--listen", "0.0.0.0"]
+ENTRYPOINT ["/workspace/entrypoint.sh"]
+ENV NVIDIA_VISIBLE_DEVICES=all PYTHONPATH="${PYTHONPATH}:${PWD}" CLI_ARGS=""
+CMD python -u "/comfyui/main.py" --listen "0.0.0.0" ${CLI_ARGS}
