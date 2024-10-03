@@ -6,3 +6,5 @@ if [ ! -f "main.py" ]; then
 else
   echo "main.py found." 
 fi
+
+exec "$@"
