@@ -14,8 +14,8 @@ if [ -d "${ROOT}/.git" ]; then
   git fetch --tags
   
   # Get the latest local and remote tags
-  LOCAL_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || git rev-parse --short HEAD)
-  REMOTE_TAG=$(git ls-remote --tags origin | cut -d/ -f3 | tail -n1)
+  LOCAL_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
+  REMOTE_TAG=$(git ls-remote --tags origin | grep -o 'refs/tags/[vV]*[0-9.]*' | sort -V | tail -n1 | sed 's/refs\/tags\///')
 
   echo "Current version (local): ${LOCAL_TAG}"
   echo "Latest version (remote): ${REMOTE_TAG}"
@@ -33,7 +33,7 @@ else
   echo "Installing ComfyUI, cloning..."
   
   # Clone the repository into /comfyui and include the .git directory
-  git clone https://github.com/comfyanonymous/ComfyUI.git ${TEMP_DIR} --depth 1
+  git clone https://github.com/comfyanonymous/ComfyUI.git ${TEMP_DIR} --depth 1 --tags -q
   cd ${ROOT}
   
   # Move the files from the temporary directory to /comfyui
@@ -48,8 +48,8 @@ if [ -d "${ROOT}/custom_nodes/ComfyUI-Manager/.git" ]; then
 
    cd ${ROOT}/custom_nodes/ComfyUI-Manager
    git fetch --tags
-   LOCAL_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || git rev-parse --short HEAD)
-   REMOTE_TAG=$(git ls-remote --tags origin | cut -d/ -f3 | tail -n1)
+   LOCAL_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
+   REMOTE_TAG=$(git ls-remote --tags origin | grep -o 'refs/tags/[vV]*[0-9.]*' | sort -V | tail -n1 | sed 's/refs\/tags\///')
    echo "Current ComfyUI-Manager version (local): ${LOCAL_TAG}"
    echo "Latest ComfyUI-Manager version (remote): ${REMOTE_TAG}"   
    
