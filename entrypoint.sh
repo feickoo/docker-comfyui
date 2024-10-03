@@ -12,7 +12,7 @@ fi
 
 # Check if ComfyUI-Manager exists
 if [ ! -d /custom_nodes/ComfyUI-Manager ]; then
-  echo "main.py not found, cloning..."
+  echo "ComfyUI-Manager not found, cloning..."
   git clone https://github.com/ltdrdata/ComfyUI-Manager.git ${ROOT}/custom_nodes/ComfyUI-Manager --depth 1
 else
   echo "ComfyUI-Manager found." 
