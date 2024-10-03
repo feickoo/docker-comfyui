@@ -75,12 +75,12 @@ if [ -d "${ROOT}/custom_nodes/ComfyUI-Manager/.git" ]; then
      git pull --rebase
      echo "Updated ComfyUI-Manager to version ${REMOTE_TAG}"
    else
-     echo "ComfyUI-Manager is already up-to-date."
+     echo "ComfyUI-Manager is up-to-date."
    fi
 else
    echo "ComfyUI-Manager not found, cloning..."
    git clone ${C_M_GIT} ${ROOT}/custom_nodes/ComfyUI-Manager --depth 1 -q
-   echo "ComfyUI-Manager cloned successfully."
+   echo "ComfyUI-Manager installed successfully."
 fi
 
 # Execute any passed command (like starting main.py)
