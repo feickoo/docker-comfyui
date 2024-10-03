@@ -3,6 +3,10 @@
 # Define the directory for temporary cloning
 TEMP_DIR="/gitclone"
 
+# Mark /comfyui and /comfyui/custom_nodes/ComfyUI-Manager as safe directories for Git
+git config --global --add safe.directory /comfyui
+git config --global --add safe.directory /comfyui/custom_nodes/ComfyUI-Manager
+
 # Check if /comfyui is a git repository
 if [ -d "${ROOT}/.git" ]; then
   echo "Checking updates for ComfyUI..."
@@ -14,8 +18,8 @@ if [ -d "${ROOT}/.git" ]; then
   git fetch --tags
   
   # Get the latest local and remote tags
-  LOCAL_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
-  REMOTE_TAG=$(git ls-remote --tags origin | grep -o 'refs/tags/[vV]*[0-9.]*' | sort -V | tail -n1 | sed 's/refs\/tags\///')
+  LOCAL_TAG=$(git describe --tags "$LOCAL_COMMIT" 2>/dev/null)
+  REMOTE_TAG=$(git describe --tags "$REMOTE_COMMIT" 2>/dev/null)
 
   echo "Current version (local): ${LOCAL_TAG}"
   echo "Latest version (remote): ${REMOTE_TAG}"
@@ -48,8 +52,8 @@ if [ -d "${ROOT}/custom_nodes/ComfyUI-Manager/.git" ]; then
 
    cd ${ROOT}/custom_nodes/ComfyUI-Manager
    git fetch --tags
-   LOCAL_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null)
-   REMOTE_TAG=$(git ls-remote --tags origin | grep -o 'refs/tags/[vV]*[0-9.]*' | sort -V | tail -n1 | sed 's/refs\/tags\///')
+   LOCAL_TAG=$(git describe --tags "$LOCAL_COMMIT" 2>/dev/null)
+   REMOTE_TAG=$(git describe --tags "$REMOTE_COMMIT" 2>/dev/null)
    echo "Current ComfyUI-Manager version (local): ${LOCAL_TAG}"
    echo "Latest ComfyUI-Manager version (remote): ${REMOTE_TAG}"   
    
