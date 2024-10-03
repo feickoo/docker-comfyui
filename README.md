@@ -8,9 +8,12 @@ This docker app is configured for Nvidia GPU only.
 
 
 
-All the support please go visit each relative GitHub page
+### All the support please go visit each relative GitHub page.
+[ComfyUI](https://github.com/comfyanonymous/ComfyUI)
 
+[ComfyUI-Manager](https://github.com/ltdrdata/ComfyUI-Manager)
 
+[Pytorch](https://hub.docker.com/layers/pytorch/pytorch/2.4.1-cuda12.4-cudnn9-runtime/images/sha256-0a3b9fedefe1f61ac4d5a9de9015c0863db27ca0fde2d4e37e6268147980b726)
 
 ## Docker Compose
 
