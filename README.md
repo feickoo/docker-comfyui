@@ -26,7 +26,7 @@ services:
     ports:
       - 8188:8188
     volumes:
-      - /comfyui:/comfy
+      - /comfyui:/comfyui
     deploy:
       resources:
         reservations:
