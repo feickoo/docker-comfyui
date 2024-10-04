@@ -54,35 +54,11 @@ fi
 
 # Check if ComfyUI-Manager exists and update or clone it
 if [ -d "${ROOT}/custom_nodes/ComfyUI-Manager/.git" ]; then
-echo "Checking updates for ComfyUI-Manager..."
-
-# Move into the ComfyUI-Manager directory
-cd ${ROOT}/custom_nodes/ComfyUI-Manager
-
-# Fetch the latest changes from the remote repository quietly
-git fetch --tags -q
-
-# Get the latest local and remote tags
-LOCAL_TAG=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || git rev-parse --short HEAD)
-REMOTE_TAG=$(git ls-remote --tags ${C_M_GIT} | grep -o 'refs/tags/[vV]*[0-9.]*' | sort -V | tail -n1 | sed 's/refs\/tags\///')
-
-echo "Current ComfyUI-Manager version (local): ${LOCAL_TAG}"
-echo "Latest ComfyUI-Manager version (remote): ${REMOTE_TAG}"
-
-# If the versions don't match, pull the latest changes
-if [ "${LOCAL_TAG}" != "${REMOTE_TAG}" ]; then
-echo "New version of ComfyUI-Manager available, pulling the latest changes..."
-git reset --hard origin/master
-git pull --rebase
-echo "Updated ComfyUI-Manager to version ${REMOTE_TAG}"
-else
-     echo "ComfyUI-Manager is already up-to-date."
-     echo "ComfyUI-Manager is up-to-date."
+echo "ComfyUI-Manager is already installed"
 fi
 else
 echo "ComfyUI-Manager not found, cloning..."
 git clone ${C_M_GIT} ${ROOT}/custom_nodes/ComfyUI-Manager --depth 1 -q
-   echo "ComfyUI-Manager cloned successfully."
    echo "ComfyUI-Manager installed successfully."
 fi
 
