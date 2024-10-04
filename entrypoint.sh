@@ -38,4 +38,4 @@ fi
 
 chown -R 777 /comfyui
 
-exec sudo -u comfy-artist python -u /comfyui/main.py --listen 0.0.0.0
+sudo -u comfy-artist python -u /comfyui/main.py --listen 0.0.0.0
