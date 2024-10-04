@@ -54,12 +54,11 @@ fi
 
 # Check if ComfyUI-Manager exists and update or clone it
 if [ -d "${ROOT}/custom_nodes/ComfyUI-Manager/.git" ]; then
-echo "ComfyUI-Manager is already installed"
-fi
+  echo "ComfyUI-Manager is already installed"
 else
-echo "ComfyUI-Manager not found, cloning..."
-git clone ${C_M_GIT} ${ROOT}/custom_nodes/ComfyUI-Manager --depth 1 -q
-   echo "ComfyUI-Manager installed successfully."
+  echo "ComfyUI-Manager not found, cloning..."
+  git clone ${C_M_GIT} ${ROOT}/custom_nodes/ComfyUI-Manager --depth 1 -q
+  echo "ComfyUI-Manager installed successfully."
 fi
 
 # Execute any passed command (like starting main.py)
