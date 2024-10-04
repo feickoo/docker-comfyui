@@ -38,4 +38,4 @@ fi
 
 chown -R 777 /comfyui
 
-su comfy-artist -c "python -u /comfyui/main.py --listen 0.0.0.0" 
+exec su - comfy-artist -c "python -u /comfyui/main.py --listen 0.0.0.0"
