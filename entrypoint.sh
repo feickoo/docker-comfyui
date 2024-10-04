@@ -12,8 +12,8 @@ git config --global --add safe.directory /comfyui/custom_nodes/ComfyUI-Manager
 COMFY_GIT="https://github.com/comfyanonymous/ComfyUI.git"
 C_M_GIT="https://github.com/ltdrdata/ComfyUI-Manager.git"
 
-# Check if /comfyui exists (but don't try to update it)
-if [ -d "${ROOT}/main.py" ]; then
+# Check if ComfyUI exists 
+if [ -f "${ROOT}/main.py" ]; then
   echo "ComfyUI is already installed."
 else
   echo "ComfyUI not found, installing..."
@@ -25,7 +25,7 @@ else
   echo "ComfyUI installed successfully."
 fi
 
-# Check if ComfyUI-Manager exists (but don't try to update it)
+# Check if ComfyUI-Manager exists
 if [ -d "${ROOT}/custom_nodes/ComfyUI-Manager" ]; then
   echo "ComfyUI-Manager is already installed."
 else
@@ -37,5 +37,4 @@ else
 fi
 
 chown -R 777 /comfyui
-
-exec su - comfy-artist -c "python -u /comfyui/main.py --listen 0.0.0.0"
+exec "$@"
