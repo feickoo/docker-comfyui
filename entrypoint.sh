@@ -15,6 +15,9 @@ COMFY_GIT="https://github.com/comfyanonymous/ComfyUI.git"
 C_M_GIT="https://github.com/ltdrdata/ComfyUI-Manager.git"
 FORGE_GIT="https://github.com/lllyasviel/stable-diffusion-webui-forge.git"
 
+# Ensure required directories exist
+mkdir -p ${COMFY} ${FORGE} ${TEMP_DIR}
+
 # Check which UI to use based on the environment variable UI
 if [ "${UI}" = "forge" ]; then
     # ForgeUI flow
@@ -36,8 +39,8 @@ if [ "${UI}" = "forge" ]; then
     # Set permissions for the /forge directory
     chown -R 777 ${FORGE}
 
-    # Start the ForgeUI service
-    exec ${FORGE}/webui.sh --listen 0.0.0.0
+    # Switch to the non-root user and start the ForgeUI service
+    exec su-exec nobody ${FORGE}/webui.sh --listen 0.0.0.0
 
 else
     # ComfyUI flow
@@ -70,6 +73,6 @@ else
     # Set permissions for the /comfyui directory
     chown -R 777 ${COMFY}
 
-    # Start the ComfyUI service
-    exec python -u ${COMFY}/main.py --listen 0.0.0.0
+    # Switch to the non-root user and start the ComfyUI service
+    exec su-exec nobody python -u ${COMFY}/main.py --listen 0.0.0.0
 fi
