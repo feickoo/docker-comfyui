@@ -40,7 +40,7 @@ if [ "${UI}" = "forge" ]; then
     chown -R 777 ${FORGE}
 
     # Switch to the non-root user and start the ForgeUI service
-    exec su-exec nobody ${FORGE}/webui.sh --listen 0.0.0.0
+    exec gosu appuser ${FORGE}/webui.sh --listen 0.0.0.0
 
 else
     # ComfyUI flow
@@ -74,5 +74,5 @@ else
     chown -R 777 ${COMFY}
 
     # Switch to the non-root user and start the ComfyUI service
-    exec su-exec nobody python -u ${COMFY}/main.py --listen 0.0.0.0
+    exec gosu appuser python -u ${COMFY}/main.py --listen 0.0.0.0
 fi
