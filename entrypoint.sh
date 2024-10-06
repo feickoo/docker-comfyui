@@ -1,40 +1,75 @@
 #!/bin/bash
 
-# Define the directory for temporary cloning
+# Define directories
+COMFY="/comfyui"
+FORGE="/forge"
 TEMP_DIR="/gitclone"
-ROOT="/comfyui"
 
 # Mark directories as safe for Git
-git config --global --add safe.directory /comfyui
-git config --global --add safe.directory /comfyui/custom_nodes/ComfyUI-Manager
+git config --global --add safe.directory ${COMFY}
+git config --global --add safe.directory ${COMFY}/custom_nodes/ComfyUI-Manager
+git config --global --add safe.directory ${FORGE}
 
-# Repository URL for ComfyUI
+# Repository URLs
 COMFY_GIT="https://github.com/comfyanonymous/ComfyUI.git"
 C_M_GIT="https://github.com/ltdrdata/ComfyUI-Manager.git"
+FORGE_GIT="https://github.com/lllyasviel/stable-diffusion-webui-forge.git"
 
-# Check if ComfyUI exists 
-if [ -f "${ROOT}/main.py" ]; then
-  echo "ComfyUI is already installed."
+# Check which UI to use based on the environment variable UI
+if [ "${UI}" = "forge" ]; then
+    # ForgeUI flow
+    echo "UI is set to forge. Checking ForgeUI installation..."
+
+    # Check if ForgeUI is installed
+    if [ -d "${FORGE}" ] && [ "$(ls -A ${FORGE})" ]; then
+      echo "ForgeUI is already installed."
+    else
+      echo "ForgeUI not found or empty, installing..."
+
+      # Clone the repository into a temporary directory and copy it to /forge
+      git clone ${FORGE_GIT} ${TEMP_DIR} --depth 1 -q
+      cp -rf ${TEMP_DIR}/* ${FORGE}/
+      cp -rf ${TEMP_DIR}/.[^.]* ${FORGE}/  # Also copy hidden files
+      echo "ForgeUI installed successfully."
+    fi
+
+    # Set permissions for the /forge directory
+    chown -R 777 ${FORGE}
+
+    # Start the ForgeUI service
+    exec ${FORGE}/webui.sh --listen 0.0.0.0
+
 else
-  echo "ComfyUI not found, installing..."
-  
-  # Clone the repository into /comfyui if it doesn't exist
-  git clone ${COMFY_GIT} ${TEMP_DIR} --depth 1 -q
-  cp -rf ${TEMP_DIR}/* ${ROOT}/
-  cp -rf ${TEMP_DIR}/.[^.]* ${ROOT}/ # Also copy hidden files
-  echo "ComfyUI installed successfully."
-fi
+    # ComfyUI flow
+    echo "UI is empty or not set to forge. Proceeding with ComfyUI installation..."
 
-# Check if ComfyUI-Manager exists
-if [ -d "${ROOT}/custom_nodes/ComfyUI-Manager" ]; then
-  echo "ComfyUI-Manager is already installed."
-else
-  echo "ComfyUI-Manager not found, installing..."
-  
-  # Clone ComfyUI-Manager if it doesn't exist
-  git clone ${C_M_GIT} ${ROOT}/custom_nodes/ComfyUI-Manager --depth 1 -q
-  echo "ComfyUI-Manager installed successfully."
-fi
+    # Check if ComfyUI is installed
+    if [ -f "${COMFY}/main.py" ]; then
+      echo "ComfyUI is already installed."
+    else
+      echo "ComfyUI not found, installing..."
+      
+      # Clone the repository into a temporary directory and copy it to /comfyui
+      git clone ${COMFY_GIT} ${TEMP_DIR} --depth 1 -q
+      cp -rf ${TEMP_DIR}/* ${COMFY}/
+      cp -rf ${TEMP_DIR}/.[^.]* ${COMFY}/  # Also copy hidden files
+      echo "ComfyUI installed successfully."
+    fi
 
-chown -R 777 /comfyui
-exec "$@"
+    # Check if ComfyUI-Manager is installed
+    if [ -d "${COMFY}/custom_nodes/ComfyUI-Manager" ]; then
+      echo "ComfyUI-Manager is already installed."
+    else
+      echo "ComfyUI-Manager not found, installing..."
+      
+      # Clone ComfyUI-Manager if it doesn't exist
+      git clone ${C_M_GIT} ${COMFY}/custom_nodes/ComfyUI-Manager --depth 1 -q
+      echo "ComfyUI-Manager installed successfully."
+    fi
+
+    # Set permissions for the /comfyui directory
+    chown -R 777 ${COMFY}
+
+    # Start the ComfyUI service
+    exec python -u ${COMFY}/main.py --listen 0.0.0.0
+fi
