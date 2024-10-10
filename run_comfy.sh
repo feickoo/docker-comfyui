@@ -23,4 +23,4 @@ fi
 chown -R ${APPUSER}:${APPUSER} ${COMFY}
 
 # Start the ComfyUI service as APPUSER
-exec gosu ${APPUSER} python -u ${COMFY}/main.py --listen 0.0.0.0
+exec gosu ${PUID}:${PGID} python -u ${COMFY}/main.py --listen 0.0.0.0
