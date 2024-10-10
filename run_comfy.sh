@@ -1,7 +1,6 @@
 #!/bin/bash
 
 run_comfy() {
-    echo "UI is empty or not set to forge. Proceeding with ComfyUI installation..."
 
     if [ -f "${COMFY}/main.py" ]; then
       echo "ComfyUI is already installed."
