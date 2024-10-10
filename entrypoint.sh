@@ -3,7 +3,7 @@
 # Use provided PUID and PGID, or default to 1000 if not set
 PUID=${PUID:-1000}
 PGID=${PGID:-1000}
-USER_NAME="containeruser"
+USER_NAME="appuser"
 USER_HOME="/home/${USER_NAME}"
 
 # Create a group and user with the specified PUID and PGID
