@@ -19,23 +19,10 @@ fi
 # Set the correct PATH for the user
 export PATH="${USER_HOME}/.local/bin:$PATH"
 
-# Define directories
-COMFY="/comfyui"
-FORGE="/forge"
-TEMP_DIR="/gitclone"
-
 # Mark directories as safe for Git
 git config --global --add safe.directory ${COMFY}
 git config --global --add safe.directory ${COMFY}/custom_nodes/ComfyUI-Manager
 git config --global --add safe.directory ${FORGE}
-
-# Repository URLs
-COMFY_GIT="https://github.com/comfyanonymous/ComfyUI.git"
-C_M_GIT="https://github.com/ltdrdata/ComfyUI-Manager.git"
-FORGE_GIT="https://github.com/lllyasviel/stable-diffusion-webui-forge.git"
-
-# Ensure required directories exist
-mkdir -p ${FORGE} ${TEMP_DIR}
 
 # Run the appropriate service based on UI variable
 if [ "${UI}" = "forge" ]; then
