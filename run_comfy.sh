@@ -5,9 +5,7 @@ if [ -f "${COMFY}/main.py" ]; then
   echo "ComfyUI is already installed."
 else
   echo "ComfyUI not found, installing..."
-  git clone ${COMFY_GIT} ${TEMP_DIR} --depth 1 -q
-  cp -rf ${TEMP_DIR}/* ${COMFY}/
-  cp -rf ${TEMP_DIR}/.[^.]* ${COMFY}/
+  git clone ${COMFY_GIT} ${COMFY}
   echo "ComfyUI installed successfully."
 fi
 
@@ -15,7 +13,7 @@ fi
 if [ -d "${COMFY}/custom_nodes/ComfyUI-Manager" ]; then
   echo "ComfyUI-Manager is already installed."
 else
-  git clone ${C_M_GIT} ${COMFY}/custom_nodes/ComfyUI-Manager --depth 1 -q
+  git clone ${C_M_GIT} ${COMFY}/custom_nodes
   echo "ComfyUI-Manager installed successfully."
 fi
 
