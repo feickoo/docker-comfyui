@@ -20,7 +20,7 @@ else
 fi
 
 # Set permissions for the /comfyui directory
-chown -R ${APPUSER}:${APPUSER} ${COMFY}
+chown -R ${PUID}:${PGID} ${COMFY}
 
 # Start the ComfyUI service as APPUSER
 exec gosu ${PUID}:${PGID} python -u ${COMFY}/main.py --listen 0.0.0.0
