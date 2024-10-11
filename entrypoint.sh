@@ -18,6 +18,7 @@ fi
 
 # Set the correct PATH for the user
 export PATH="${USER_HOME}/.local/bin:$PATH"
+export PUID PGID
 
 # Mark directories as safe for Git
 git config --global --add safe.directory ${COMFY}
