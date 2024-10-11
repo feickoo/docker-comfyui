@@ -13,7 +13,7 @@ fi
 if [ -d "${COMFY}/custom_nodes/ComfyUI-Manager" ]; then
   echo "ComfyUI-Manager is already installed."
 else
-  git clone ${C_M_GIT} ${COMFY}/custom_nodes
+  git clone ${C_M_GIT} ${COMFY}/custom_nodes/ComfyUI-Manager
   echo "ComfyUI-Manager installed successfully."
 fi
 
